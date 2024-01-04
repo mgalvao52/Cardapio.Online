@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Cardapio.Application.DTOs.ReadMenuItemDTO>
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<div class="text-center">
+    <h4 class="display-7">Bem vindo ao Cardapio Web</h4>
+</div>
+<hr />
+<label id="mesa" hidden>@TempData["numeroMesa"]</label>
+<label id="pedido" hidden>@TempData["numeroPedido"]</label>
+<div class="container row">
+    @foreach (var item in Model.ToList())
+    {
+        <div class="list">
+            <div class="item" data-id="@item.Id">
+                <img class="item-image" src="@item.Image" />
+                <ul>
+                    <li>
+                        <h5>@item.Name</h5>
+                        <p>@item.Description</p>
+                    </li>
+
+                </ul>
+                @* <div class="item-qtde">
+                    <label>Qtde:</label>
+                    <input type="number" max="10" min="1" value="1" id="qtde"/>
+                </div> *@
+                <h5 class="item-price">R$ <span id="price">@item.Price.ToString("00.00")</span></h5> 
+                @* <input type="button" class="btn-sm btn-outline-dark mt-auto" value="Fazer Pedido" onclick="postOrder(event)" /> *@
+            </div>
+        </div>
+
+    }
+
+</div>

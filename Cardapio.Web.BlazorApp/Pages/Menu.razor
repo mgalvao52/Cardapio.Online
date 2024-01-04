@@ -1,0 +1,54 @@
+﻿@page "/menu"
+
+<PageTitle>Menu</PageTitle>
+
+@using Cardapio.Application.DTOs
+@using Cardapio.Web.BlazorApp.Data
+@using System.Globalization
+@using Cardapio.Web.BlazorApp.Services
+@inject MenuService menuItemService
+
+<center>
+    <h4>Faça o seu pedido!</h4>
+</center>
+
+@if (menuList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container row">
+        @foreach (var item in menuList)
+        {
+            <div class="list">
+                <div class="item" data-id="@item.Id">
+                    <img class="item-image" src="@item.Image" title="item.Image"/>
+                    <ul>
+                        <li>
+                            <h5>@item.Name</h5>
+                            <p>@item.Description</p>
+                        </li>
+
+                    </ul>
+                    <h5 class="item-price">
+                        <span id="price">@item.Price.ToString("c", CultureInfo.GetCultureInfo("pt-br"))</span>
+                    </h5>
+                    <input type="button" class="btn-sm btn-outline-dark" style="margin-top:auto; margin-left:auto;" value="Fazer Pedido" onclick="postOrder(event)" />
+
+                </div>
+            </div>
+
+
+        }
+    </div>
+}
+
+@code {
+    private IEnumerable<ReadMenuItemDTO>? menuList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        menuList = await menuItemService.GetAllAsync("api/menuitem");
+    }
+}

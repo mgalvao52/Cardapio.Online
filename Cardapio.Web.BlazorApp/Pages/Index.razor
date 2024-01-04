@@ -1,0 +1,75 @@
+﻿@page "/"
+
+<PageTitle>Menu</PageTitle>
+
+@using Cardapio.Application.DTOs
+@using Cardapio.Web.BlazorApp.Data
+@using System.Globalization
+@using Cardapio.Web.BlazorApp.Helper
+@using Cardapio.Web.BlazorApp.Services
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject LocalStorageAccessor protectedLocalStorage
+@inject OrderMenuService orderMenuService
+
+@if(TableNumber == 0)
+{
+    <h3>carregando...</h3>
+}
+else if (OrderMenu != null)
+{
+    
+    <Menu/>
+}
+else
+{
+    <div class="container row">
+
+        @foreach (var item in TableList)
+        {
+            <div class="list">
+                <div class="item">
+                    <ul>
+                        <li>
+                            <h5>@("Mesa"+item)</h5>
+                        </li>
+                    </ul>
+                    <input type="button" class="btn-sm btn-outline-dark" style="margin-top:auto;" value="Mesa @item" @onclick="()=>PostOrderAsync(item)" />
+
+                </div>
+            </div>
+        }
+    </div>
+    
+}
+
+@code {
+    public ReadOrderDTO OrderMenu{ get; set; }
+    public int TableNumber{ get; set; }
+    public List<int> TableList =
+        new List<int> { 1, 2, 3, 4, 5, 6 };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var number = await protectedLocalStorage.GetValueAsync<string>("mesa");
+        TableNumber = int.TryParse(number, out int value) ? value : 0;
+        OrderMenu = await orderMenuService.GetOrderAsync(TableNumber);
+        StateHasChanged();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        // var number = await protectedLocalStorage.GetValueAsync<int>("mesa");
+        // OrderMenu = await orderMenuService.GetOrderAsync(TableNumber);
+    }
+
+    public async void PostOrderAsync(int id)
+    {
+        var order = new AddOrderDTO { Number = id };
+        var result = await orderMenuService.AddOrderAsync(order);
+        if (result != null)
+        {
+            OrderMenu = await orderMenuService.GetOrderAsync(result.Number);
+            await protectedLocalStorage.SetValueAsync("mesa", OrderMenu.Number);
+        }
+        
+    }
+}
