@@ -1,5 +1,6 @@
 ﻿using Cardapio.DB.Enums;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Cardapio.Application.DTOs
 {
@@ -19,6 +20,7 @@ namespace Cardapio.Application.DTOs
         public string MenuDescription { get; set; }
         [DisplayName("Tempo de preparo")]
         public int Time { get; set; }
+        [EnumDataType(typeof(OrderItemStatus))]
         public OrderItemStatus Status { get; set; }
     }
 }

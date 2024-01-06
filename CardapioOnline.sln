@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cardapio.Application", "Cardapio.Application\Cardapio.Application.csproj", "{6D7AE2A6-718D-4188-8670-6F5D23CC2505}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cardapio.Web.BlazorApp", "Cardapio.Web.BlazorApp\Cardapio.Web.BlazorApp.csproj", "{DA11A827-1334-47A6-B3B2-9573C7C36DFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cardapio.Web.BlazorApp", "Cardapio.Web.BlazorApp\Cardapio.Web.BlazorApp.csproj", "{DA11A827-1334-47A6-B3B2-9573C7C36DFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

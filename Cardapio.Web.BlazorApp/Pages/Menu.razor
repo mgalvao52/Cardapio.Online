@@ -7,6 +7,7 @@
 @using System.Globalization
 @using Cardapio.Web.BlazorApp.Services
 @inject MenuService menuItemService
+@inject OrderMenuService orderMenuService
 
 <center>
     <h4>Faça o seu pedido!</h4>
@@ -18,12 +19,15 @@
 }
 else
 {
+    <a class="nav-link" href="pedido/@TableNumber">
+        Lista de Pedidos
+    </a>
     <div class="container row">
         @foreach (var item in menuList)
         {
             <div class="list">
                 <div class="item" data-id="@item.Id">
-                    <img class="item-image" src="@item.Image" title="item.Image"/>
+                    <img class="item-image" src="@item.Image" title="item.Image" />
                     <ul>
                         <li>
                             <h5>@item.Name</h5>
@@ -34,7 +38,8 @@ else
                     <h5 class="item-price">
                         <span id="price">@item.Price.ToString("c", CultureInfo.GetCultureInfo("pt-br"))</span>
                     </h5>
-                    <input type="button" class="btn-sm btn-outline-dark" style="margin-top:auto; margin-left:auto;" value="Fazer Pedido" onclick="postOrder(event)" />
+                    <input type="button" class="btn-sm btn-outline-dark" style="margin-top:auto; margin-left:auto;"
+                           value="Fazer Pedido" @onclick="()=>PostItemOrderAsync(item.Id.Value)" />
 
                 </div>
             </div>
@@ -45,10 +50,21 @@ else
 }
 
 @code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public int TableNumber { get; set; }
+
     private IEnumerable<ReadMenuItemDTO>? menuList;
 
     protected override async Task OnInitializedAsync()
     {
         menuList = await menuItemService.GetAllAsync("api/menuitem");
+    }
+    public async Task PostItemOrderAsync(int id)
+    {
+        await orderMenuService.AddOrderItemAsync(new AddOrderItemDTO { MenuItemId = id, OrderId = Id, Amount = 1 });
     }
 }

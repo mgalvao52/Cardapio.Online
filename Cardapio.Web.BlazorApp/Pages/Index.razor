@@ -16,9 +16,8 @@
     <h3>carregando...</h3>
 }
 else if (OrderMenu != null)
-{
-    
-    <Menu/>
+{    
+    <Menu Id="OrderMenu.Id.Value" TableNumber="TableNumber"/>
 }
 else
 {
@@ -50,10 +49,14 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var number = await protectedLocalStorage.GetValueAsync<string>("mesa");
-        TableNumber = int.TryParse(number, out int value) ? value : 0;
-        OrderMenu = await orderMenuService.GetOrderAsync(TableNumber);
-        StateHasChanged();
+        if (firstRender)
+        {
+            var number = await protectedLocalStorage.GetValueAsync<string>("mesa");
+            TableNumber = int.TryParse(number, out int value) ? value : 0;
+            OrderMenu = await orderMenuService.GetOrderAsync(TableNumber);
+            StateHasChanged();            
+        }
+        await base.OnAfterRenderAsync(firstRender);
     }
     protected override async Task OnInitializedAsync()
     {
