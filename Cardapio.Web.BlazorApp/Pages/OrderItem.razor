@@ -1,0 +1,101 @@
+﻿@page "/pedido/{tableNumber:int}"
+@using Cardapio.Application.DTOs
+@using Cardapio.DB.Enums
+@using Cardapio.Web.BlazorApp.Services
+@using System.Globalization
+@inject OrderMenuService orderMenuService
+@inject OrderPaymentService orderPaymentService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navigation
+
+<PageTitle>Lista de pedidos</PageTitle>
+<h4>Lista de Pedidos</h4>
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Descrição</th>
+            <th>Quantidade</th>
+            <th>Preço</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(readOrder?.OrderItems != null)
+        {
+            @foreach (var item in readOrder.OrderItems)
+            {
+                <tr>
+                    <th>@item.MenuName</th>
+                    <th>@item.Amount</th>
+                    <th>@item.Price.ToString("c", CultureInfo.GetCultureInfo("pt-br"))</th>
+                    <th>@GetStatus(item.Status)</th>
+                </tr>
+            }
+            
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Total</th>
+            <th></th>
+            <th>@Total.ToString("c", CultureInfo.GetCultureInfo("pt-br"))</th>
+        </tr>        
+    </tfoot>
+</table>
+
+<input type="button" class="btn btn-primary" value="Finalizar Pedido" @onclick="()=>CheckingOrderAsync(readOrder.Id.Value,Total)" />
+
+
+@code {
+    [Parameter]
+    public int TableNumber { get; set; }
+
+    private decimal Total{ get; set; }
+
+    private ReadOrderDTO readOrder = new ReadOrderDTO();
+
+    protected override async Task OnInitializedAsync()
+    {
+        readOrder = await orderMenuService.GetOrderAsync(TableNumber);
+        if (readOrder?.OrderItems != null)
+        {
+            Total = readOrder.OrderItems.Sum(s => s.Price * s.Amount);
+        }
+        await base.OnInitializedAsync();
+    }
+    private string GetStatus(OrderItemStatus orderItemStatus)
+    {
+        switch (orderItemStatus)
+        {
+            case OrderItemStatus.Pending:
+                return "Pendente";
+            case OrderItemStatus.Preparing:
+                return "Preparando";
+            default:
+                return "Pronto";
+        }
+
+    }
+
+    private async Task CheckingOrderAsync(int orderId,decimal total)
+    {
+        var resp = await jsRuntime.InvokeAsync<bool>("confirm", "Deseja Finalizar o Pedido?");
+        if (resp)
+        {
+            var result = await orderPaymentService.AddPaymentAsync(new AddPaymentDTO { OrderId = orderId, Total = total });
+            if (result)
+            {
+                await jsRuntime.InvokeVoidAsync("alert", "Pedido finalizado con sucesso!!");
+                navigation.NavigateTo("/");
+            }
+            else
+            {
+                await jsRuntime.InvokeVoidAsync("alert", "Falha ao finalizar pedido");
+            }
+        }
+
+        await Task.CompletedTask;
+    }
+}
