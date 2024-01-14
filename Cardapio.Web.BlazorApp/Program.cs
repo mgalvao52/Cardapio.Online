@@ -1,6 +1,7 @@
 using Cardapio.Web.BlazorApp.Configurations;
 using Cardapio.Web.BlazorApp.Helper;
 using Cardapio.Web.BlazorApp.Services;
+using Microsoft.JSInterop;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ var url = builder.Configuration["Configuration:BaseUrl"];
 builder.Services.AddHttpClient(nameof(MenuService),s=> s.BaseAddress = new Uri(url));
 builder.Services.AddSingleton<MenuService>();
 builder.Services.AddSingleton<OrderMenuService>();
+builder.Services.AddSingleton<OrderPaymentService>();
 builder.Services.AddScoped<LocalStorageAccessor>();
 
 var app = builder.Build();

@@ -10,6 +10,7 @@
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject LocalStorageAccessor protectedLocalStorage
 @inject OrderMenuService orderMenuService
+@inject NavigationManager navigation
 
 @if(TableNumber == 0)
 {
@@ -21,7 +22,8 @@ else if (OrderMenu != null)
 }
 else
 {
-    <div class="container row">
+    <center class="m-2"><h3>Selecione uma mesa</h3></center>
+    <div class="container row m-4">
 
         @foreach (var item in TableList)
         {
@@ -64,7 +66,7 @@ else
         // OrderMenu = await orderMenuService.GetOrderAsync(TableNumber);
     }
 
-    public async void PostOrderAsync(int id)
+    public async Task PostOrderAsync(int id)
     {
         var order = new AddOrderDTO { Number = id };
         var result = await orderMenuService.AddOrderAsync(order);
@@ -72,6 +74,7 @@ else
         {
             OrderMenu = await orderMenuService.GetOrderAsync(result.Number);
             await protectedLocalStorage.SetValueAsync("mesa", OrderMenu.Number);
+            navigation.NavigateTo("/menu");
         }
         
     }

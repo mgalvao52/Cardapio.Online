@@ -69,5 +69,6 @@ namespace Cardapio.Web.BlazorApp.Services
             }
             return result;
         }
+        
     }
 }

@@ -34,6 +34,7 @@ namespace Cardapio.DB.Repositories
         {
             var menuItem = await context.MenuItem.FirstOrDefaultAsync(s=>s.Id == entity.MenuItemId);
             entity.Price = menuItem.Price;
+            entity.Status = OrderItemStatus.Pending;
             return await base.CreateAsync(entity);
         }
 

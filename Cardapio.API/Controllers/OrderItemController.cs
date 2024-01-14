@@ -40,11 +40,11 @@ namespace Cardapio.API.Controllers
         }
 
         [HttpPut("{itemId}/{status}")]
-        public async Task<IActionResult> UpdateStatusAsync(int itemId,OrderItemStatus orderItemStatus)
+        public async Task<IActionResult> UpdateStatusAsync(int itemId,OrderItemStatus status)
         {
             try
             {
-                await _orderItemService.UpdateStatusAsync(itemId,orderItemStatus);
+                await _orderItemService.UpdateStatusAsync(itemId,status);
                 if (_orderItemService.responseMessage.IsValid)
                 {
                     var menuItem = await _orderItemService.GetByIdAsync(itemId);
