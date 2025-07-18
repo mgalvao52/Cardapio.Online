@@ -44,8 +44,15 @@
         </tr>        
     </tfoot>
 </table>
+@if (Total > 0)
+{
+    <input type="button" class="btn btn-primary" value="Finalizar Pedido" @onclick="()=>CheckingOrderAsync(readOrder.Id.Value,Total)" />
 
-<input type="button" class="btn btn-primary" value="Finalizar Pedido" @onclick="()=>CheckingOrderAsync(readOrder.Id.Value,Total)" />
+}
+else
+{
+    <input type="button" class="btn btn-danger" value="Cancelar Mesa" @onclick="() => CancelOrderAsync(readOrder.Id.Value)" />
+}
 
 
 @code {
@@ -93,6 +100,26 @@
             else
             {
                 await jsRuntime.InvokeVoidAsync("alert", "Falha ao finalizar pedido");
+            }
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task CancelOrderAsync(int orderId)
+    {
+        var resp = await jsRuntime.InvokeAsync<bool>("confirm", "Finalizar a mesa?");
+        if (resp)
+        {
+            var result = await orderMenuService.DeleteAsync(orderId);
+            if (result)
+            {
+                await jsRuntime.InvokeVoidAsync("alert","Mesa finalizada com sucesso!");
+                navigation.NavigateTo("/");
+            }
+            else
+            {
+                await jsRuntime.InvokeVoidAsync("alert", "Falha a finalizar a mesa");
             }
         }
 

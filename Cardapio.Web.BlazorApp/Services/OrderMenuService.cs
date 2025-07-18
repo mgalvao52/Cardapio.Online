@@ -69,6 +69,27 @@ namespace Cardapio.Web.BlazorApp.Services
             }
             return result;
         }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var result = false;
+            try
+            {
+                HttpResponseMessage resp = null;
+                resp = await _httpClient.DeleteAsync($"api/order/{id}");
+                if (resp.IsSuccessStatusCode)
+                {
+                    var json = await resp.Content.ReadAsStringAsync();
+                }
+
+                return resp.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+            }
+
+            return result;
+        }
         
     }
 }

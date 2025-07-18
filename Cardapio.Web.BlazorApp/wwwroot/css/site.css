@@ -65,6 +65,15 @@ a, .btn-link {
 
 .list {
     padding: 1px;
+    margin: .5rem auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    justify-content: space-around;
+}
+
+.custom-card {
+    padding: 1px;
     margin: .5rem;
     display: flex;
     flex-direction: column;
@@ -84,9 +93,9 @@ a, .btn-link {
 }
 
 .item-image {
-    width: auto;
+    width:auto;
     height: 6rem;
-    margin: 0 auto;
+    margin: .3rem auto;
 }
 
 ul {

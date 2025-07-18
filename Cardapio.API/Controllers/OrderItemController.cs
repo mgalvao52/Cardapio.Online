@@ -27,7 +27,7 @@ namespace Cardapio.API.Controllers
                 if (_orderItemService.responseMessage.IsValid)
                 {
                     var item = await _orderItemService.GetByIdAsync(result);
-                    _producer.SendMessage(item);
+                    _producer.SendMessage(item,"order");
                     return Created("", orderDTO);
                 }
                 return BadRequest(_orderItemService.responseMessage.Erros);

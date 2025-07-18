@@ -7,7 +7,7 @@ namespace Cardapio.Application.RabbitMQ
 {
     public class Producer : IProducer
     {
-        public void SendMessage<T>(T message)
+        public void SendMessage<T>(T message,string queueName)
         {
             var factory = new ConnectionFactory
             {
@@ -22,7 +22,7 @@ namespace Cardapio.Application.RabbitMQ
             using var channel = connection.CreateModel();
 
             // declara a fila duravel e aguarda confirmação do consumidor para deletar.
-            channel.QueueDeclare(queue:"order",durable:true, exclusive: false,autoDelete:false,arguments:null);
+            channel.QueueDeclare(queue:queueName,durable:true, exclusive: false,autoDelete:false,arguments:null);
 
             var json = JsonSerializer.Serialize(message);
 
@@ -35,7 +35,7 @@ namespace Cardapio.Application.RabbitMQ
             // e espera-lo terminar o processo antes de mandar outra mensage
             channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
 
-            channel.BasicPublish(exchange:string.Empty,routingKey:"order",basicProperties:properties,body:body);
+            channel.BasicPublish(exchange:string.Empty,routingKey:queueName,basicProperties:properties,body:body);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Cardapio.API.Controllers
                 {
                     foreach (var item in orderDTO.OrderItems)
                     {
-                        _producer.SendMessage(item);
+                        _producer.SendMessage(item,"order");
                     }
                     orderDTO.Id = result;
                     return Created("", orderDTO);
@@ -55,7 +55,7 @@ namespace Cardapio.API.Controllers
 
         }
         [HttpGet("{numeroMesa}")]
-        public async Task<IActionResult> GetByNumerMesaAsync(int numeroMesa)
+        public async Task<IActionResult> GetByNumeroMesaAsync(int numeroMesa)
         {
             try
             {

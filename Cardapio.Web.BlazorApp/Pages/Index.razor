@@ -28,15 +28,22 @@ else
         @foreach (var item in TableList)
         {
             <div class="list">
-                <div class="item">
-                    <ul>
-                        <li>
-                            <h5>@("Mesa"+item)</h5>
-                        </li>
-                    </ul>
-                    <input type="button" class="btn-sm btn-outline-dark" style="margin-top:auto;" value="Mesa @item" @onclick="()=>PostOrderAsync(item)" />
+                <div class="card text-center" style="width:18rem">
+                    <div class="card-header bg-secondary text-white">
+                         <h5>@("Mesa "+item)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title">
+                            Clique para iniciar seu atendimento
+                        </div>
 
+                    </div>
+                    <div class="card-footer">
+                        <input type="button" class="btn-sm btn-outline-primary" style="margin-top:auto;" value="Soliciar atendimento" @onclick="()=>PostOrderAsync(item)" />
+
+                    </div>
                 </div>
+
             </div>
         }
     </div>
@@ -74,7 +81,7 @@ else
         {
             OrderMenu = await orderMenuService.GetOrderAsync(result.Number);
             await protectedLocalStorage.SetValueAsync("mesa", OrderMenu.Number);
-            navigation.NavigateTo("/menu");
+            navigation.NavigateTo("/menu/"+OrderMenu.Id+"/"+OrderMenu.Number);
         }
         
     }

@@ -1,14 +1,16 @@
-﻿@page "/menu"
+﻿@page "/menu/{Id:int}/{TableNumber:int}"
 
 <PageTitle>Menu</PageTitle>
 
 @using Cardapio.Application.DTOs
 @using Cardapio.Web.BlazorApp.Data
 @using System.Globalization
+@using Cardapio.Web.BlazorApp.Helper
 @using Cardapio.Web.BlazorApp.Services
 @inject MenuService menuItemService
 @inject OrderMenuService orderMenuService
 @inject IJSRuntime JsRuntime
+@inject LocalStorageAccessor protectedLocalStorage
 
 <center>
     <h4>Faça o seu pedido!</h4>
@@ -26,22 +28,32 @@ else
     <div class="container row">
         @foreach (var item in menuList)
         {
-            <div class="list">
-                <div class="item" data-id="@item.Id">
-                    <img class="item-image" src="@item.Image" title="item.Image" />
-                    <ul>
-                        <li>
-                            <h5>@item.Name</h5>
-                            <p>@item.Description</p>
-                        </li>
+            int amount = 1;
+            <div class="custom-card">
+                <div class="card" data-id="@item.Id">
+                    <div class="card-header">
+                    </div>
+                    <div class="card-body">
 
-                    </ul>
-                    <h5 class="item-price">
-                        <span id="price">@item.Price.ToString("c", CultureInfo.GetCultureInfo("pt-br"))</span>
-                    </h5>
-                    <input type="button" class="btn-sm btn-outline-dark" style="margin-top:auto; margin-left:auto;"
-                           value="Fazer Pedido" @onclick="()=>PostItemOrderAsync(item.Id.Value)" />
+                        <div class="card-img-top text-center">
+                            <img class="item-image" src="@item.Image" title="item.Image" />
+                        </div>
+                        <h5 class="card-title">
+                            @item.Name
+                        </h5>                        
+                        <p class="card-subtitle">
+                            @item.Description
+                        </p>
+                    </div>
+                        <h5 class="item-price">
+                            <span id="price">@item.Price.ToString("c", CultureInfo.GetCultureInfo("pt-br"))</span>
+                        </h5>
+                    <div class="card-footer d-flex justify-content-around">
+                        <input class="text-center" type="number" maxlength="2" min="1" max="10" @bind-value="@amount"/>
+                        <input type="button" class="btn-sm btn-outline-dark" style="margin-top:auto; margin-left:auto;"
+                               value="Fazer Pedido" @onclick="() => PostItemOrderAsync(item.Id.Value,amount)" />
 
+                    </div>
                 </div>
             </div>
 
@@ -52,7 +64,7 @@ else
 
 @code {
 
-    
+
     [Parameter]
     public int Id { get; set; }
 
@@ -60,19 +72,20 @@ else
     public int TableNumber { get; set; }
 
     private IEnumerable<ReadMenuItemDTO>? menuList;
-    
+
 
     protected override async Task OnInitializedAsync()
     {
         menuList = await menuItemService.GetAllAsync("api/menuitem");
     }
-    public async Task PostItemOrderAsync(int id)
+    public async Task PostItemOrderAsync(int id,int amount)
     {
-        var ok = await orderMenuService.AddOrderItemAsync(new AddOrderItemDTO { MenuItemId = id, OrderId = Id, Amount = 1 });
+        var ok = await orderMenuService.AddOrderItemAsync(new AddOrderItemDTO { MenuItemId = id, OrderId = Id, Amount = amount });
         if (ok)
         {
             await JsRuntime.InvokeVoidAsync("alert", "pedido efetuado com sucesso!!");
-        }else
+        }
+        else
         {
             await JsRuntime.InvokeVoidAsync("alert", "pedido não concluido!!");
         }
